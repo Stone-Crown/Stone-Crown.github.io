@@ -173,7 +173,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-11-23 18:49:40 / 修改时间：21:22:10" itemprop="dateCreated datePublished" datetime="2021-11-23T18:49:40+08:00">2021-11-23</time>
+              <time title="创建时间：2021-11-23 18:49:40 / 修改时间：21:34:31" itemprop="dateCreated datePublished" datetime="2021-11-23T18:49:40+08:00">2021-11-23</time>
             </span>
 
           
@@ -190,40 +190,14 @@
           <h2 id="一、背景介绍"><a href="#一、背景介绍" class="headerlink" title="一、背景介绍"></a>一、背景介绍</h2><h3 id="拓扑结构"><a href="#拓扑结构" class="headerlink" title="拓扑结构"></a>拓扑结构</h3><p>主路由：小娱      OS:    Padavan </p>
 <p>AP:          K2P       OS:    Padaban</p>
 <p>旁路有： 玩客云  OS:    Armbian</p>
-<p>有读者可能会觉得何必这么麻烦，一个K2P刷一个大而全的固件不就可以解决所有问题了么？</p>
-<p>我先解释一下为什么明明一个设备能搞定的事情非要搞三个设备这(jiu)么(shi)麻(zhe)烦(teng)。</p>
-<p>前期我也确实是一台设备打天下，但因为家里弱电箱的位置比较靠近门口，且弱电箱空间有限所以导致两个问题。</p>
-<p>1、即使K2P 的无线能力很能打，但受摆放位置影响，也很难很好的做到全屋覆盖。</p>
-<p>2、因四天线体积问题使得本来就捉襟见肘的弱电箱空间更显拥挤，不利于日常维护。</p>
-<p>所以打算将K2P从弱电箱挪到客厅，正常情况下直接一根线接到光猫也就行了。</p>
-<p>但考虑到其他有线网络的接入需求，需要加入一个交换机或者有线路由。</p>
-<p>小娱因其功耗低，内存大，固件多，接口齐全，体积小，全千兆等有点成为我的首选。</p>
-<p>这样一来，主路由负责有线接入和路由，K2P被当成AP作为无线接入口，更好的覆盖全屋无线。</p>
-<p>分工明确结构清晰，不用为了这样那用的功能一遍又一遍折腾固件。所有的业务需求全部交给旁路由，毕竟MTK7621算力有限。</p>
-<p>旁路有由玩客云担任，当然也可以使用N1,但毕竟玩客云便宜不是？</p>
-<p>我搞了两台，一台绝育后插上移动硬盘做下载机，一台刷入Armbian后跑docker。我在docker上目前运行两个容器分别是qiandao和AdGuardHome，前者帮我完成各大网站的签到任务，后者负责家里网络的广告过滤。</p>
-<h2 id="二、问题描述"><a href="#二、问题描述" class="headerlink" title="二、问题描述"></a>二、问题描述</h2><p>我在dokcer中部署了qiandao和AdGuardHome，在配置后AdGuardHome也正常工作，但似乎qiandao就无法正常解析网址了。<br>当我将主路由的DNS指向从AdGuardHome改回主路由，并重启docker宿主后，qiandao可以正常解析了。</p>
-<p>AdGuardHome 启动命令如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run --name adguardhome\</span><br><span class="line">    --restart unless-stopped\</span><br><span class="line">    -v /root/AdguardHome/workdir:/opt/adguardhome/work\</span><br><span class="line">    -v /root/AdguardHome/confdir:/opt/adguardhome/conf\</span><br><span class="line">    -p 53:53/tcp -p 53:53/udp\</span><br><span class="line">    -p 67:67/udp \</span><br><span class="line">    -p 80:80/tcp -p 443:443/tcp -p 443:443/udp -p 3000:3000/tcp\</span><br><span class="line">    -p 853:853/tcp\</span><br><span class="line">    -p 784:784/udp -p 853:853/udp -p 8853:8853/udp\</span><br><span class="line">    -p 5443:5443/tcp -p 5443:5443/udp\</span><br><span class="line">    -d adguard/adguardhome</span><br></pre></td></tr></table></figure>
-
-<p>qiandao启动命令如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name qiandao -p 3067:80 -v $(pwd)/qiandao/config:/usr/src/app/config a76yyyy/qiandao:20211102</span><br></pre></td></tr></table></figure>
-
-<p>签到任务报错如下</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231412916.png"></p>
-<p>在AdGuardHome中查看日志，发现解析似乎是正常</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231415200.png"></p>
-<p>理论上通过宿主机上的docker0网桥，容器可以与容器，宿主机乃至外界进行网络通信。</p>
-<p>网络模型可以参考下图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231503022.jpg"></p>
-<h2 id="三、解决办法"><a href="#三、解决办法" class="headerlink" title="三、解决办法"></a>三、解决办法</h2><h3 id="使用macvlan"><a href="#使用macvlan" class="headerlink" title="使用macvlan"></a>使用macvlan</h3><p>使用 macvlan 网络模式的好处是容器相当于是一个独立的设备，可以拥有一个独立且固定的 IP 和 MAC 地址，不需要理会任何端口的状态，所有端口都可以使用默认的，兼容性更好。macvlan 网络模式唯一缺点是宿主机无法与容器直接通讯（Docker 为了安全性做了隔离处理），如果宿主机想要使用需要进行一些特殊的设置。</p>
-<p>打开网卡混杂模式 :<code>ip link set eth0 promisc on</code><br>创建名为macnet的虚拟mac网卡: <code>network create -d macvlan --subnet=192.168.2.0/24 --gateway=192.168.2.1 -o parent=eth0 macnet</code><br>给adguardhome 指定ip: <code>docker run --name adguardhome --restart unless-stopped --network macnet --ip x.x.x.x .......</code></p>
-<p>参考下面的帖子<br><a target="_blank" rel="noopener" href="https://www.right.com.cn/forum/thread-1066223-1-1.html">https://www.right.com.cn/forum/thread-1066223-1-1.html</a></p>
-<p>打通Armbian宿主机对AdGuardHome的访问，让处于bridge模式下的qiandao能够通过AdGuardHome进行DNS解析</p>
-<p>auto eth0<br>iface eth0 inet manual</p>
-<p>auto macvlan<br>iface macvlan inet dhcp<br>网卡启动前建立macvlan和eth0的桥接：<code>pre-up ip link add macvlan link eth0 type macvlan mode bridge</code><br>关闭后删除macvlan和eth0的桥接：<code>post-down ip link del macvlan link eth0 type macvlan mode bridge</code></p>
-<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>个人认为当下的解决办法应该不是最佳的解决方案，因个人缺少系统且专业的网络和docker知识只能东平西凑出当下的权宜之计。后续如有新的解决方案也会再更新记录。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/23/Docker%E4%B8%8B%E9%83%A8%E7%BD%B2AdGuardHome%E9%80%9A%E4%BF%A1%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
