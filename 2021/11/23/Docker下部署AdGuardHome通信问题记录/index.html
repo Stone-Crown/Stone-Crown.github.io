@@ -17,22 +17,24 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="一、背景介绍拓扑结构主路由：小娱      OS:    Padavan  AP:          K2P       OS:    Padaban 旁路有： 玩客云  OS:    Armbian">
+  <meta name="description" content="一、背景介绍拓扑结构   用途 硬件 系统    主路由 小娱 Padavan   AP K2P Padaban   旁路由 玩客云 Armbian">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker下部署AdGuardHome通信问题记录">
 <meta property="og:url" content="http://example.com/2021/11/23/Docker%E4%B8%8B%E9%83%A8%E7%BD%B2AdGuardHome%E9%80%9A%E4%BF%A1%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/index.html">
 <meta property="og:site_name" content="Crown">
-<meta property="og:description" content="一、背景介绍拓扑结构主路由：小娱      OS:    Padavan  AP:          K2P       OS:    Padaban 旁路有： 玩客云  OS:    Armbian">
+<meta property="og:description" content="一、背景介绍拓扑结构   用途 硬件 系统    主路由 小娱 Padavan   AP K2P Padaban   旁路由 玩客云 Armbian">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231412916.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231415200.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231503022.jpg">
 <meta property="article:published_time" content="2021-11-23T10:49:40.000Z">
-<meta property="article:modified_time" content="2021-11-23T13:34:31.592Z">
+<meta property="article:modified_time" content="2021-11-24T12:53:15.343Z">
 <meta property="article:author" content="Stone">
+<meta property="article:tag" content="网络">
+<meta property="article:tag" content="Docker">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/Stone-Crown/image-repo/img/202111231412916.png">
 
@@ -108,6 +110,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -122,16 +125,53 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -177,9 +217,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-11-23 18:49:40 / 修改时间：21:34:31" itemprop="dateCreated datePublished" datetime="2021-11-23T18:49:40+08:00">2021-11-23</time>
+              <time title="创建时间：2021-11-23 18:49:40" itemprop="dateCreated datePublished" datetime="2021-11-23T18:49:40+08:00">2021-11-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-24 20:53:15" itemprop="dateModified" datetime="2021-11-24T20:53:15+08:00">2021-11-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
             </span>
 
           
@@ -189,6 +244,20 @@
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -200,9 +269,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="一、背景介绍"><a href="#一、背景介绍" class="headerlink" title="一、背景介绍"></a>一、背景介绍</h2><h3 id="拓扑结构"><a href="#拓扑结构" class="headerlink" title="拓扑结构"></a>拓扑结构</h3><p>主路由：小娱      OS:    Padavan </p>
-<p>AP:          K2P       OS:    Padaban</p>
-<p>旁路有： 玩客云  OS:    Armbian</p>
+        <h2 id="一、背景介绍"><a href="#一、背景介绍" class="headerlink" title="一、背景介绍"></a>一、背景介绍</h2><h3 id="拓扑结构"><a href="#拓扑结构" class="headerlink" title="拓扑结构"></a>拓扑结构</h3><table>
+<thead>
+<tr>
+<th align="center">用途</th>
+<th align="center">硬件</th>
+<th align="center">系统</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">主路由</td>
+<td align="center">小娱</td>
+<td align="center">Padavan</td>
+</tr>
+<tr>
+<td align="center">AP</td>
+<td align="center">K2P</td>
+<td align="center">Padaban</td>
+</tr>
+<tr>
+<td align="center">旁路由</td>
+<td align="center">玩客云</td>
+<td align="center">Armbian</td>
+</tr>
+</tbody></table>
 <span id="more"></span>
 
 <p>有读者可能会觉得何必这么麻烦，一个K2P刷一个大而全的固件不就可以解决所有问题了么？</p>
@@ -237,7 +327,7 @@
 <p>打通Armbian宿主机对AdGuardHome的访问，让处于bridge模式下的qiandao能够通过AdGuardHome进行DNS解析</p>
 <p>auto eth0<br>iface eth0 inet manual</p>
 <p>auto macvlan<br>iface macvlan inet dhcp<br>网卡启动前建立macvlan和eth0的桥接：<code>pre-up ip link add macvlan link eth0 type macvlan mode bridge</code><br>关闭后删除macvlan和eth0的桥接：<code>post-down ip link del macvlan link eth0 type macvlan mode bridge</code></p>
-<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>个人认为当下的解决办法应该不是最佳的解决方案，因个人缺少系统且专业的网络和docker知识只能东平西凑出当下的权宜之计。后续如有新的解决方案也会再更新记录。</p>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>个人认为当下的解决办法应该不是最佳的解决方案，因个人缺少系统且专业的网络和docker知识只能东拼西凑出当下的权宜之计。后续如有新的解决方案也会再更新记录。</p>
 
     </div>
 
@@ -246,6 +336,11 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 网络</a>
+              <a href="/tags/Docker/" rel="tag"><i class="fa fa-tag"></i> Docker</a>
+          </div>
 
         
 
@@ -335,6 +430,18 @@
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
   </nav>
 </div>
   <div class="links-of-author motion-element">
@@ -372,6 +479,18 @@
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Stone</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">2k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://github.com/Stone-Crown" class="theme-link" rel="noopener" target="_blank">Stone-Crown</a> 强力驱动
   </div>
@@ -410,6 +529,8 @@
   </div>
 
   
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
@@ -430,6 +551,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
