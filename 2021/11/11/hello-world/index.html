@@ -609,12 +609,6 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
       recordIP   : false,
       serverURLs : ''
     });
-    // 添加以下6行，删除Powered By Valine
-    var infoEle = document.querySelector('#valine-comments .info');
-    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
-      infoEle.childNodes.forEach(function(item) {
-        item.parentNode.removeChild(item);
-      });
     }
   }, window.Valine);
 });
